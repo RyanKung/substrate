@@ -20,11 +20,11 @@ def transfer(line: str) -> str:
 
 
 
-def parser(path: str) -> ():
-    with open(path, "r") as f, open("./deps.toml", "w+") as t:
+def parser() -> ():
+    with open("./Cargo.toml", "r") as f, open("./deps.toml", "w+") as t:
         content = f.readlines()
         t.writelines(map(transfer, content))
 
 
 if __name__ == '__main__':
-    parser(sys.argv[2])
+    parser()
