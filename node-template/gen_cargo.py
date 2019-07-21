@@ -10,7 +10,7 @@ def find_package_name(path: str) -> str:
 
 
 def transfer(line: str) -> str:
-    matched = re.match('(.*) = \{.* path = \"(.*)\"', line)
+    matched = re.match('(.*) = \{.* path = \"(\.\..*)\"', line)
     if not matched: return line
     package = matched.group(1)
     path = matched.group(2)
