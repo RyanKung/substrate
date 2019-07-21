@@ -2,6 +2,7 @@
 
 import re
 from functools import partial
+import sys
 
 
 def find_package_name(path: str) -> str:
@@ -19,11 +20,11 @@ def transfer(line: str) -> str:
 
 
 
-def parser() -> ():
-    with open("./Cargo.toml", "r") as f, open("./deps.toml", "w+") as t:
+def parser(path: str) -> ():
+    with open(path, "r") as f, open("./deps.toml", "w+") as t:
         content = f.readlines()
         t.writelines(map(transfer, content))
 
 
 if __name__ == '__main__':
-    parser()
+    parser(sys.argv[2])
