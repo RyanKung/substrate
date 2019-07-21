@@ -1,5 +1,6 @@
 #! python3
 
+import toml
 import re
 from functools import partial
 import sys
@@ -10,21 +11,22 @@ def find_package_name(path: str) -> str:
         return next(filter(bool, map(partial(re.match, 'name = \"(.*)\"'), f.readlines()))).group(1)
 
 
-def transfer(line: str) -> str:
-    matched = re.match('(.*) = \{.* path = \"(\.\..*)\"', line)
-    if not matched: return line
-    package = matched.group(1)
-    path = matched.group(2)
-    template = '%s = { git = "https://github.com/RyanKung/substrate", package = "%s" }\n'
-    return template % (package, find_package_name(path))
-
+def transfer(dep: dict) -> dict:
+    if isinstance(dep, str) or "path" not in dep.keys():
+        return dep
+    path = dep['path']
+    dep.pop('path')
+    dep['git'] = "https://github.com/ryankung/substrate.git"
+    dep['package'] = find_package_name(path)
+    return dep
 
 
 def parser() -> ():
-    with open("./Cargo.toml", "r") as f, open("./deps.toml", "w+") as t:
-        content = f.readlines()
-        t.writelines(map(transfer, content))
-
+    data = toml.load("Cargo.toml")
+    deps = {k: transfer(v) for k, v in data['dependencies'].items()}
+    data["dependencies"] = deps
+    with open("Cargo.toml", "w+") as d:
+        toml.dump(data, d)
 
 if __name__ == '__main__':
     parser()
