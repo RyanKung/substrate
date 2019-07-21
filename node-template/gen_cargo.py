@@ -14,16 +14,15 @@ def transfer(line: str) -> str:
     if not matched: return line
     package = matched.group(1)
     path = matched.group(2)
-    template = '%s = { git="https://github.com/RyanKung/substrate", package="%s" }\n'
+    template = '%s = { git = "https://github.com/RyanKung/substrate", package = "%s" }\n'
     return template % (package, find_package_name(path))
 
 
 
 def parser() -> ():
-    with open("./Cargo.toml", "r+") as f, open("./Cargo.toml.bak", "w+") as bak:
+    with open("./Cargo.toml", "r") as f, open("./deps.toml", "w+") as t:
         content = f.readlines()
-        bak.writelines(content)
-        f.writelines(map(transfer, content))
+        t.writelines(map(transfer, content))
 
 
 if __name__ == '__main__':
