@@ -14,6 +14,8 @@ def transfer(dep: dict) -> dict:
     if isinstance(dep, str) or "path" not in dep.keys():
         return dep
     path = dep['path']
+    if not ".." in path:
+        return dep
     dep.pop('path')
     dep['git'] = "https://github.com/ryankung/substrate.git"
     name, version = find_package_data(path)
