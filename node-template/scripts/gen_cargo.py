@@ -5,10 +5,9 @@ import re
 from functools import partial
 import sys
 
-
-def find_package_name(path: str) -> str:
-    with open("%s/Cargo.toml" % path, "r") as f:
-        return next(filter(bool, map(partial(re.match, 'name = \"(.*)\"'), f.readlines()))).group(1)
+def find_package_data(path: str) -> (str, str):
+    data = toml.load("%s/Cargo.toml" % path)
+    return (data['package']['name'], data['package']['version'])
 
 
 def transfer(dep: dict) -> dict:
@@ -17,7 +16,9 @@ def transfer(dep: dict) -> dict:
     path = dep['path']
     dep.pop('path')
     dep['git'] = "https://github.com/ryankung/substrate.git"
-    dep['package'] = find_package_name(path)
+    name, version = find_package_data(path)
+    dep['package'] = name
+    dep['version'] = version
     return dep
 
 
